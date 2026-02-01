@@ -25,6 +25,7 @@ function addProduct() {
         alert("Product added successfully!");
         document.getElementById("name").value = "";
         document.getElementById("price").value = "";
+         document.getElementById("cat").value = "";
         imageInput.value = "";
     };
 

@@ -9,7 +9,7 @@
 <body>
 
 <header>
-    <h1>🛍️ My Saree Store</h1>
+    <h1>🛍️ Welcome to S.R Collections </h1>
 </header>
 
 <input 
@@ -18,12 +18,12 @@
     placeholder="Search sarees..." 
     onkeyup="searchProducts()"
 >
-
 <select onchange="sortProducts(this.value)">
     <option value="">Sort by Price</option>
     <option value="low">Low to High</option>
     <option value="high">High to Low</option>
 </select>
+
 
 <div class="filters">
     <button onclick="filterProducts('All')">All</button>
@@ -40,9 +40,12 @@
 <h2>🛒 Cart</h2>
 <div id="cart"></div>
 <h3 id="total">Total: ₹0</h3>
-<button onclick="buyNow()">Buy Now</button>
+<button onclick="buyNow()">Buy Now</button><br>
 
 
 <script src="script.js"></script>
+<button onclick="window.location.href='seller.html'" style="margin: 10px; margin-left: 0;">
+  Seller Login
+</button>
 </body>
 </html>

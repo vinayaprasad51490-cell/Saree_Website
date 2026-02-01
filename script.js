@@ -1,7 +1,7 @@
 const defaultProducts = [
     { id: 1, name: "Red Silk Saree", price: 1500, category: "Silk", image: "images/red.jpeg" },
-    { id: 2, name: "Cotton Saree", price: 1200, category: "Cotton", image: "images/cream.jpeg" },
-    { id: 3, name: "Green Silk Saree", price: 2200, category: "Silk", image: "images/green.jpeg" }
+    { id: 2, name: "Cream Cotton Saree", price: 1200, category: "Cotton", image: "images/cream.jpeg" },
+    { id: 3, name: "Green Designer Saree", price: 2200, category: "Designer", image: "images/green.jpeg" }
 ];
 
 
@@ -61,7 +61,6 @@ function showCart() {
     document.getElementById("total").innerText = "Total: ₹" + total;
 }
 
-
 function removeItem(index) {
     cart.splice(index, 1);
     localStorage.setItem("cart", JSON.stringify(cart));
@@ -70,6 +69,7 @@ function removeItem(index) {
 
 // Load cart on page load
 showCart();
+
 
 function buyNow() {
     if (cart.length === 0) {
@@ -85,6 +85,7 @@ function buyNow() {
     localStorage.removeItem("cart");
     showCart();
 }
+
 function filterProducts(category) {
     if (category === "All") {
         displayProducts(products);

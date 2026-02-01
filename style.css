@@ -4,24 +4,28 @@ body {
     padding: 20px;
     background: #f8f8f8;
 }
+
 header {
     background: #d81b60;
     color: white;
     padding: 15px;
     text-align: center;
 }
+
 .products {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
     gap: 20px;
     margin-top: 20px;
 }
+
 .product {
     background: white;
     padding: 15px;
     border-radius: 8px;
     text-align: center;
 }
+
 .product img {
     width: 100%;
     height: 260px;
@@ -29,7 +33,6 @@ header {
     background-color: #f2f2f2;
     border-radius: 6px;
 }
-
 
 button {
     background: #d81b60;
@@ -73,10 +76,11 @@ button {
     padding: 8px 14px;
 }
 #searchBox {
-    width: 100%;
+    width: 98.5%;
     padding: 10px;
     margin: 10px 0;
     font-size: 16px;
+    margin-right: 0px;
 }
 select {
     width: 100%;

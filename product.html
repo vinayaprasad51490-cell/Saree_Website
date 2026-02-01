@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Product Details</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    .product-page {
+      max-width: 1000px;
+      margin: 40px auto;
+      display: flex;
+      gap: 40px;
+      padding: 20px;
+    }
+
+    .product-page img {
+      width: 400px;
+      border-radius: 10px;
+    }
+
+    .product-info h1 {
+      margin-bottom: 10px;
+    }
+
+    .price {
+      font-size: 24px;
+      color: #e91e63;
+      margin: 10px 0;
+    }
+
+    .buy-btn {
+      padding: 12px 20px;
+      background: #e91e63;
+      color: white;
+      border: none;
+      font-size: 16px;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+
+    #toast {
+  position: fixed;
+  bottom: 30px;
+  right: 30px;
+  background: #333;
+  color: #fff;
+  padding: 12px 20px;
+  border-radius: 6px;
+  opacity: 0;
+  transition: opacity 0.4s ease;
+  z-index: 1000;
+}
+#toast.show {
+  opacity: 1;
+}
+
+  </style>
+</head>
+<body>
+
+<div class="product-page">
+  <img id="productImage" src="" alt="Product">
+  <div class="product-info">
+    <h1 id="productName"></h1>
+    <p id="productCategory"></p>
+    <p class="price" id="productPrice"></p>
+    <p id="productDescription"></p>
+
+    <div style="margin:15px 0;">
+  <button onclick="changeQty(-1)">−</button>
+  <span id="qty" style="margin:0 15px;font-size:18px;">1</span>
+  <button onclick="changeQty(1)">+</button>
+</div>
+
+<button class="buy-btn" onclick="addToCart()">Add to Cart</button>
+<button class="buy-btn" style="margin-left:10px" onclick="goBack()">Back</button>
+
+
+
+  </div>
+</div>
+
+<script>
+  const product = JSON.parse(localStorage.getItem("selectedProduct"));
+
+  if (!product) {
+    document.body.innerHTML = `
+      <h2 style="text-align:center; margin-top:50px;">
+        ❌ No product selected<br><br>
+        <a href="index.html">⬅ Go back to Home</a>
+      </h2>
+    `;
+  } else {
+    document.getElementById("productImage").src = product.image;
+    document.getElementById("productName").innerText = product.name;
+    document.getElementById("productCategory").innerText = "Category: " + product.category;
+    document.getElementById("productPrice").innerText = "₹" + product.price;
+    document.getElementById("productDescription").innerText =
+      "Beautiful " + product.category + " saree perfect for weddings, festivals and special occasions.";
+  }
+
+let quantity = 1;
+
+function changeQty(value) {
+  quantity += value;
+  if (quantity < 1) quantity = 1;
+  document.getElementById("qty").innerText = quantity;
+}
+
+  function addToCart() {
+  const product = JSON.parse(localStorage.getItem("selectedProduct"));
+
+  if (!product) {
+    alert("Error: product not found!");
+    return;
+  }
+
+  let cart = JSON.parse(localStorage.getItem("cart")) || [];
+
+  const item = {
+    ...product,
+    quantity: quantity,
+    price: product.price || 0,
+    category: product.category || "Unknown"
+  };
+
+  cart.push(item);
+  localStorage.setItem("cart", JSON.stringify(cart));
+
+  const toast = document.getElementById("toast");
+  toast.classList.add("show");
+
+  setTimeout(() => {
+    toast.classList.remove("show");
+  }, 2000);
+}
+
+function goBack() {
+  window.history.back();
+}
+
+
+</script>
+
+<div id="toast">Added to cart!</div>
+
+</body>
+</html>
