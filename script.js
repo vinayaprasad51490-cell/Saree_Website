@@ -126,3 +126,28 @@ function openProduct(product) {
   localStorage.setItem("selectedProduct", JSON.stringify(product));
   window.location.href = "product.html";
 }
+function placeOrder() {
+  let cart = JSON.parse(localStorage.getItem("cart")) || [];
+
+  if (cart.length === 0) {
+    alert("Your cart is empty!");
+    return;
+  }
+
+  let message = "Hello, I want to place an order:%0A%0A";
+  let total = 0;
+
+  cart.forEach(item => {
+    message += `${item.name} x ${item.quantity} - ₹${item.price * item.quantity}%0A`;
+    total += item.price * item.quantity;
+  });
+
+  message += `%0A*Total Amount: ₹${total}*`;
+
+  // 👉 Replace with YOUR WhatsApp number
+  let phoneNumber = "918151825736";
+
+  let whatsappURL = `https://wa.me/${phoneNumber}?text=${message}`;
+
+  window.open(whatsappURL, "_blank");
+}
