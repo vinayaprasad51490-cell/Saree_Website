@@ -53,8 +53,7 @@ function showCart() {
     let total = 0;
 
     cart.forEach((item, index) => {
-        total += item.price;
-
+         total += item.price * (item.quantity || 1);
         cartDiv.innerHTML += `
             <p>
                 ${item.name} - ₹${item.price}
@@ -77,13 +76,15 @@ showCart();
 
 
 function buyNow() {
-    if (cart.length === 0) {
+      if (cart.length === 0) {
         alert("Your cart is empty!");
         return;
     }
 
-    let total = cart.reduce((sum, item) => sum + item.price, 0);
-
+    let total = 0;
+  cart.forEach(item => {
+    total += item.price * (item.quantity || 1);
+  });
     alert("✅ Order placed successfully!\nTotal Amount: ₹" + total);
 
     cart = [];

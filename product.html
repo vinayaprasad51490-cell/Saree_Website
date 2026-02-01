@@ -50,8 +50,15 @@
     <p class="price" id="productPrice"></p>
     <p id="productDescription"></p>
 
-    <button class="buy-btn" onclick="addToCart()">Add to Cart</button>
+    <div style="margin:15px 0;">
+  <button onclick="changeQty(-1)">−</button>
+  <span id="qty" style="margin:0 15px;font-size:18px;">1</span>
+  <button onclick="changeQty(1)">+</button>
+</div>
+
+<button class="buy-btn" onclick="addToCart()">Add to Cart</button>
 <button class="buy-btn" style="margin-left:10px" onclick="goBack()">Back</button>
+
 
   </div>
 </div>
@@ -70,11 +77,24 @@
     document.getElementById("productDescription").innerText =
       "Beautiful " + product.category + " saree perfect for weddings and festivals.";
   }
+let quantity = 1;
+
+function changeQty(value) {
+  quantity += value;
+  if (quantity < 1) quantity = 1;
+  document.getElementById("qty").innerText = quantity;
+}
 
 
   function addToCart() {
   let cart = JSON.parse(localStorage.getItem("cart")) || [];
-  cart.push(product);
+
+  const item = {
+    ...product,
+    quantity: quantity
+  };
+
+  cart.push(item);
   localStorage.setItem("cart", JSON.stringify(cart));
 
   const toast = document.getElementById("toast");
