@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Saree Store</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header>
+    <h1>🛍️ My Saree Store</h1>
+</header>
+
+<input 
+    type="text" 
+    id="searchBox" 
+    placeholder="Search sarees..." 
+    onkeyup="searchProducts()"
+>
+
+<select onchange="sortProducts(this.value)">
+    <option value="">Sort by Price</option>
+    <option value="low">Low to High</option>
+    <option value="high">High to Low</option>
+</select>
+
+<div class="filters">
+    <button onclick="filterProducts('All')">All</button>
+    <button onclick="filterProducts('Silk')">Silk</button>
+    <button onclick="filterProducts('Cotton')">Cotton</button>
+    <button onclick="filterProducts('Designer')">Designer</button>
+</div>
+
+
+<section class="products" id="productList">
+    <!-- Products will load here -->
+</section>
+
+<h2>🛒 Cart</h2>
+<div id="cart"></div>
+<h3 id="total">Total: ₹0</h3>
+<button onclick="buyNow()">Buy Now</button>
+
+
+<script src="script.js"></script>
+</body>
+</html>
