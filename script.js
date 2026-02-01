@@ -15,6 +15,7 @@ let cart = JSON.parse(localStorage.getItem("cart")) || [];
 const productList = document.getElementById("productList");
 const cartDiv = document.getElementById("cart");
 
+
 // Load products
 function displayProducts(list) {
     productList.innerHTML = "";
@@ -29,6 +30,10 @@ function displayProducts(list) {
             <p>₹${p.price}</p>
             <button onclick="addToCart(${p.id})">Add to Cart</button>
         `;
+        // click image or name to open product page
+        div.querySelector("img").onclick = () => openProduct(p);
+        div.querySelector("h3").onclick = () => openProduct(p);
+       
         productList.appendChild(div);
     });
 }
@@ -115,4 +120,8 @@ function sortProducts(order) {
     }
 
     displayProducts(sorted);
+}
+function openProduct(product) {
+  localStorage.setItem("selectedProduct", JSON.stringify(product));
+  window.location.href = "product.html";
 }
