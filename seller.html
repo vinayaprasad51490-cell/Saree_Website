@@ -12,16 +12,26 @@
 </header>
 
 <div class="product">
-    <h3>Add New Saree</h3>
+   <h2>Add New Saree</h2>
 
-    <input type="text" id="name" placeholder="Saree Name"><br><br>
-    <input type="number" id="price" placeholder="Price"><br><br>
-    <input type="text" id="cat" placeholder="Category"><br><br>
-    <input type="file" id="image"><br><br>
+<input type="text" id="pName" placeholder="Product Name"><br><br>
+<input type="number" id="pPrice" placeholder="Price"><br><br>
 
-    <button onclick="addProduct()">Add Product</button>
-</div>
+<select id="pCategory">
+  <option value="Silk">Silk</option>
+  <option value="Cotton">Cotton</option>
+  <option value="Designer">Designer</option>
+</select><br><br>
+
+<input type="file" id="pImage"><br><br>
+
+<button onclick="addProduct()">Add Product</button>
+
+<hr>
+<h3>Added Products</h3>
+<div id="sellerProducts"></div>
 
 <script src="seller.js"></script>
+
 </body>
 </html>

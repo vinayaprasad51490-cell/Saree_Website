@@ -127,14 +127,27 @@ function openProduct(product) {
   window.location.href = "product.html";
 }
 function placeOrder() {
-  let cart = JSON.parse(localStorage.getItem("cart")) || [];
+  let name = document.getElementById("custName").value;
+  let phone = document.getElementById("custPhone").value;
+  let address = document.getElementById("custAddress").value;
 
-  if (cart.length === 0) {
-    alert("Your cart is empty!");
+  if (!name || !phone || !address) {
+    alert("Please fill all customer details");
     return;
   }
 
-  let message = "Hello, I want to place an order:%0A%0A";
+  let cart = JSON.parse(localStorage.getItem("cart")) || [];
+
+  if (cart.length === 0) {
+    alert("Your cart is empty");
+    return;
+  }
+
+  let message = `Hello, I want to place an order:%0A%0A`;
+  message += `Name: ${name}%0A`;
+  message += `Phone: ${phone}%0A`;
+  message += `Address: ${address}%0A%0A`;
+
   let total = 0;
 
   cart.forEach(item => {
@@ -144,10 +157,10 @@ function placeOrder() {
 
   message += `%0A*Total Amount: ₹${total}*`;
 
-  // 👉 Replace with YOUR WhatsApp number
-  let phoneNumber = "918151825736";
-
+  let phoneNumber = "916363546295"; // replace with your number
   let whatsappURL = `https://wa.me/${phoneNumber}?text=${message}`;
 
   window.open(whatsappURL, "_blank");
 }
+//let products = JSON.parse(localStorage.getItem("products")) || [];
+
