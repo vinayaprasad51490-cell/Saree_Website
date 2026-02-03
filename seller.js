@@ -1,4 +1,6 @@
+let editIndex = -1;
 let products = JSON.parse(localStorage.getItem("products")) || [];
+
 
 function addProduct() {
   let name = document.getElementById("pName").value;
@@ -6,8 +8,38 @@ function addProduct() {
   let category = document.getElementById("pCategory").value;
   let imageInput = document.getElementById("pImage");
 
-  if (!name || !price || imageInput.files.length === 0) {
+  if (!name || !price) {
     alert("Please fill all fields");
+    return;
+  }
+
+  // 👉 UPDATE MODE
+  if (editIndex !== null) {
+    let product = products[editIndex];
+
+    product.name = name;
+    product.price = Number(price);
+    product.category = category;
+
+    // 🔥 Only change image if NEW image selected
+    if (imageInput.files.length > 0) {
+      let reader = new FileReader();
+      reader.onload = function () {
+        product.image = reader.result;
+        saveAndReset();
+      };
+      reader.readAsDataURL(imageInput.files[0]);
+    } else {
+      // ✔ keep old image
+      saveAndReset();
+    }
+
+    return;
+  }
+
+  // 👉 ADD MODE
+  if (imageInput.files.length === 0) {
+    alert("Please choose an image");
     return;
   }
 
@@ -15,25 +47,31 @@ function addProduct() {
   reader.onload = function () {
     let product = {
       id: Date.now(),
-      name: name,
+      name,
       price: Number(price),
-      category: category,
+      category,
       image: reader.result
     };
 
     products.push(product);
-    localStorage.setItem("products", JSON.stringify(products));
-
-    displaySellerProducts();
-    alert("Product added successfully ✅");
-
-    document.getElementById("pName").value = "";
-    document.getElementById("pPrice").value = "";
-    imageInput.value = "";
+    saveAndReset();
   };
-
   reader.readAsDataURL(imageInput.files[0]);
 }
+
+function saveAndReset() {
+  localStorage.setItem("products", JSON.stringify(products));
+  displaySellerProducts();
+
+  document.getElementById("pName").value = "";
+  document.getElementById("pPrice").value = "";
+  document.getElementById("pCategory").value = "Silk";
+  document.getElementById("pImage").value = "";
+
+  document.getElementById("addBtn").innerText = "Add Product";
+  editIndex = null;
+}
+
 
 function displaySellerProducts() {
   let div = document.getElementById("sellerProducts");
@@ -66,6 +104,11 @@ function displaySellerProducts() {
         <img src="${p.image}" width="100"><br>
         <b>${p.name}</b><br>
         ₹${p.price} (${p.category})<br><br>
+
+       <button onclick="editProduct(${index})" style="background:orange;color:white">
+        Edit
+      </button>
+
         <button onclick="deleteProduct(${index})" style="background:red;color:white">
           Delete
         </button>
@@ -73,6 +116,23 @@ function displaySellerProducts() {
     `;
   });
 }
+displaySellerProducts();
+function editProduct(index) {
+  editIndex = index;
+  let product = products[index];
+
+  document.getElementById("pName").value = product.name;
+  document.getElementById("pPrice").value = product.price;
+  document.getElementById("pCategory").value = product.category;
+
+  // ✔ VERY IMPORTANT
+  document.getElementById("pImage").value = "";
+
+  document.getElementById("addBtn").innerText = "Update Product";
+}
+
+
+
 function deleteProduct(index) {
   let products = JSON.parse(localStorage.getItem("products")) || [];
 
@@ -83,5 +143,3 @@ function deleteProduct(index) {
     alert("Product deleted!");
   }
 }
-displaySellerProducts();
-
