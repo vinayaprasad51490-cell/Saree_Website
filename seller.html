@@ -23,13 +23,18 @@
   <option value="Designer">Designer</option>
 </select><br><br>
 
-<input id="pImage" type="file" placeholder="Image path">
+<input type="file" id="pImage" multiple accept="image/*">
+
+
 
 <button id="addBtn" onclick="addProduct()">Add Product</button>
 
 <hr>
 <h3>Added Products</h3>
 <div id="sellerProducts"></div>
+
+
+
 
 <script src="seller.js"></script>
 
