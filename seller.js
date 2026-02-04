@@ -6,60 +6,75 @@ function addProduct() {
   let price = document.getElementById("pPrice").value;
   let category = document.getElementById("pCategory").value;
   let imageInput = document.getElementById("pImage");
+  let files = imageInput.files;
 
   if (!name || !price) {
     alert("Please fill all fields");
     return;
   }
 
-  // ✅ declare file ONLY ONCE
-  let file = imageInput.files.length > 0 ? imageInput.files[0] : null;
-
   // 🔁 UPDATE MODE
   if (editingProductId !== null) {
-  let index = products.findIndex(p => p.id === editingProductId);
-  if (index === -1) return;
+    let index = products.findIndex(p => p.id === editingProductId);
+    if (index === -1) return;
 
-  products[index].name = name;
-  products[index].price = Number(price);
-  products[index].category = category;
+    products[index].name = name;
+    products[index].price = Number(price);
+    products[index].category = category;
 
-  if (file) {
-    let reader = new FileReader();
-    reader.onload = function () {
-      products[index].image = reader.result;
+    // if new images selected → replace images
+    if (files.length > 0) {
+      let images = [];
+      let loaded = 0;
+
+      for (let i = 0; i < files.length; i++) {
+        let reader = new FileReader();
+        reader.onload = function () {
+          images.push(reader.result);
+          loaded++;
+          if (loaded === files.length) {
+            products[index].images = images;
+            saveAndReset();
+          }
+        };
+        reader.readAsDataURL(files[i]);
+      }
+    } else {
       saveAndReset();
-    };
-    reader.readAsDataURL(file);
-  } else {
-    saveAndReset();
-  }
-  return;
-}
-
-
-  // ➕ ADD MODE
-  if (!file) {
-    alert("Please select an image");
+    }
     return;
   }
 
-  let reader = new FileReader();
-  reader.onload = function () {
-    let product = {
-      id: Date.now(),
-      name,
-      price: Number(price),
-      category,
-      image: reader.result
+  // ➕ ADD MODE
+  if (files.length === 0) {
+    alert("Please select at least one image");
+    return;
+  }
+
+  let images = [];
+  let loaded = 0;
+
+  for (let i = 0; i < files.length; i++) {
+    let reader = new FileReader();
+    reader.onload = function () {
+      images.push(reader.result);
+      loaded++;
+
+      if (loaded === files.length) {
+        let product = {
+          id: Date.now(),
+          name,
+          price: Number(price),
+          category,
+          images
+        };
+        products.push(product);
+        saveAndReset();
+      }
     };
-
-    products.push(product);
-    saveAndReset();
-  };
-  reader.readAsDataURL(file);
+    reader.readAsDataURL(files[i]);
+  }
 }
-
 
 function saveAndReset() {
   localStorage.setItem("products", JSON.stringify(products));
@@ -74,7 +89,6 @@ function saveAndReset() {
   editingProductId = null;
 }
 
-
 function displaySellerProducts() {
   let container = document.getElementById("sellerProducts");
   container.innerHTML = "";
@@ -87,7 +101,8 @@ function displaySellerProducts() {
   products.forEach(p => {
     container.innerHTML += `
       <div style="border:1px solid #ccc; padding:10px; margin-bottom:10px">
-        <img src="${p.image}" width="100"><br>
+        ${p.images.map(img => `<img src="${img}" width="80" style="margin:5px">`).join("")}
+        <br>
         <b>${p.name}</b><br>
         ₹${p.price} (${p.category})<br><br>
 
@@ -103,27 +118,24 @@ function displaySellerProducts() {
   });
 }
 
-displaySellerProducts();
-
 function editProduct(id) {
-  const product = products.find(p => p.id === id);
+  let product = products.find(p => p.id === id);
   if (!product) return;
 
   document.getElementById("pName").value = product.name;
   document.getElementById("pPrice").value = product.price;
   document.getElementById("pCategory").value = product.category;
-
-  document.getElementById("pImage").value = ""; // browser security
+  document.getElementById("pImage").value = "";
 
   editingProductId = id;
   document.getElementById("addBtn").innerText = "Update Product";
 }
 
-
 function deleteProduct(id) {
-  if (!confirm("Are you sure you want to delete this product?")) return;
-
+  if (!confirm("Are you sure?")) return;
   products = products.filter(p => p.id !== id);
   localStorage.setItem("products", JSON.stringify(products));
   displaySellerProducts();
 }
+
+displaySellerProducts();

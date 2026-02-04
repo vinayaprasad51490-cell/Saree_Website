@@ -20,23 +20,33 @@ const cartDiv = document.getElementById("cart");
 function displayProducts(list) {
     productList.innerHTML = "";
 
-    list.forEach(p => {
+    list.forEach((product, index) => {
+
+        let imgSrc = "";
+
+        // support BOTH default + seller products
+        if (product.images && product.images.length > 0) {
+            imgSrc = product.images[0];
+        } else if (product.image) {
+            imgSrc = product.image;
+        }
+
         const div = document.createElement("div");
         div.className = "product";
         div.innerHTML = `
-            <img src="${p.image}">
-            <h3>${p.name}</h3>
-            <p>${p.category}</p>
-            <p>₹${p.price}</p>
-            <button onclick="addToCart(${p.id})">Add to Cart</button>
+            ${imgSrc ? `<img src="${imgSrc}" width="200" onclick="openProduct(${index})" style="cursor:pointer">
+` : "<p>No image</p>"}
+            <h3>${product.name}</h3>
+            <p>${product.category || ""}</p>
+            <p>₹${product.price}</p>
+            <button onclick="addToCart(${product.id})">Add to Cart</button>
         `;
-        // click image or name to open product page
-        div.querySelector("img").onclick = () => openProduct(p);
-        div.querySelector("h3").onclick = () => openProduct(p);
-       
+
         productList.appendChild(div);
     });
 }
+
+
 
 displayProducts(products);
 
@@ -122,10 +132,19 @@ function sortProducts(order) {
 
     displayProducts(sorted);
 }
-function openProduct(product) {
-  localStorage.setItem("selectedProduct", JSON.stringify(product));
+
+function openProduct(index) {
+  localStorage.setItem(
+    "selectedProduct",
+    JSON.stringify(products[index])
+  );
   window.location.href = "product.html";
 }
+
+
+
+
+
 function placeOrder() {
   let name = document.getElementById("custName").value;
   let phone = document.getElementById("custPhone").value;
@@ -162,5 +181,5 @@ function placeOrder() {
 
   window.open(whatsappURL, "_blank");
 }
-//let products = JSON.parse(localStorage.getItem("products")) || [];
+
 

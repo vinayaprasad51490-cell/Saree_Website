@@ -70,7 +70,17 @@
   const product = JSON.parse(localStorage.getItem("selectedProduct"));
 
   if (product) {
-    document.getElementById("productImage").src = product.image;
+    let imgSrc = "";
+
+if (product.images && product.images.length > 0) {
+  imgSrc = product.images[0];
+} else if (product.image) {
+  imgSrc = product.image;
+}
+
+document.getElementById("productImage").src = imgSrc;
+
+
     document.getElementById("productName").innerText = product.name;
     document.getElementById("productCategory").innerText = "Category: " + product.category;
     document.getElementById("productPrice").innerText = "₹" + product.price;
