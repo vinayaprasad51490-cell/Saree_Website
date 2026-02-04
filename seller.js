@@ -1,92 +1,103 @@
 let products = JSON.parse(localStorage.getItem("products")) || [];
 let editingProductId = null;
 
-function addProduct() {
+async function addProduct() {
   let name = document.getElementById("pName").value.trim();
   let price = document.getElementById("pPrice").value;
   let category = document.getElementById("pCategory").value;
   let imageInput = document.getElementById("pImage");
-  let files = imageInput.files;
+  let files = Array.from(imageInput.files); // Convert FileList to an Array
 
   if (!name || !price) {
     alert("Please fill all fields");
     return;
   }
 
-  // 🔁 UPDATE MODE
-  if (editingProductId !== null) {
-    let index = products.findIndex(p => p.id === editingProductId);
-    if (index === -1) return;
+  let images = [];
 
+  // If new files are selected, read them all
+  if (files.length > 0) {
+    // This "maps" every file to a Promise (a task to be finished)
+    const imagePromises = files.map(file => {
+      return new Promise((resolve) => {
+        let reader = new FileReader();
+        reader.onload = (e) => resolve(e.target.result);
+        reader.readAsDataURL(file);
+      });
+    });
+
+    // WAIT here until every single image is converted to text
+    images = await Promise.all(imagePromises);
+  }
+
+  if (editingProductId !== null) {
+    // UPDATE MODE
+    let index = products.findIndex(p => p.id === editingProductId);
     products[index].name = name;
     products[index].price = Number(price);
     products[index].category = category;
-
-    // if new images selected → replace images
-    if (files.length > 0) {
-      let images = [];
-      let loaded = 0;
-
-      for (let i = 0; i < files.length; i++) {
-        let reader = new FileReader();
-        reader.onload = function () {
-          images.push(reader.result);
-          loaded++;
-          if (loaded === files.length) {
-            products[index].images = images;
-            saveAndReset();
-          }
-        };
-        reader.readAsDataURL(files[i]);
-      }
-    } else {
-      saveAndReset();
+    
+    // Only update images if the user actually picked new ones
+    if (images.length > 0) {
+      products[index].images = images;
     }
-    return;
-  }
+    saveAndReset();
 
-  // ➕ ADD MODE
-  if (files.length === 0) {
-    alert("Please select at least one image");
-    return;
-  }
+  } else {
+    // ADD MODE
+    if (images.length === 0) {
+      alert("Please select at least one image");
+      return;
+    }
 
-  let images = [];
-  let loaded = 0;
-
-  for (let i = 0; i < files.length; i++) {
-    let reader = new FileReader();
-    reader.onload = function () {
-      images.push(reader.result);
-      loaded++;
-
-      if (loaded === files.length) {
-        let product = {
-          id: Date.now(),
-          name,
-          price: Number(price),
-          category,
-          images
-        };
-        products.push(product);
-        saveAndReset();
-      }
+    let product = {
+      id: Date.now(),
+      name,
+      price: Number(price),
+      category,
+      images: images // This is now your array of multiple images
     };
-    reader.readAsDataURL(files[i]);
+    products.push(product);
+    saveAndReset();
+  }
+}
+function createNewProduct(name, price, category, images) {
+  let product = {
+    id: Date.now(),
+    name,
+    price: Number(price),
+    category,
+    images
+  };
+  products.push(product);
+  saveAndReset();
+}
+
+function updateProductData(name, price, category, images) {
+  let index = products.findIndex(p => p.id === editingProductId);
+  if (index !== -1) {
+    products[index].name = name;
+    products[index].price = Number(price);
+    products[index].category = category;
+    if (images) products[index].images = images; // only update images if new ones were picked
+    saveAndReset();
   }
 }
 
 function saveAndReset() {
-  localStorage.setItem("products", JSON.stringify(products));
-  displaySellerProducts();
-
-  document.getElementById("pName").value = "";
-  document.getElementById("pPrice").value = "";
-  document.getElementById("pCategory").value = "Silk";
-  document.getElementById("pImage").value = "";
-
-  document.getElementById("addBtn").innerText = "Add Product";
-  editingProductId = null;
+  try {
+    localStorage.setItem("products", JSON.stringify(products));
+    displaySellerProducts();
+    // Clear inputs
+    document.getElementById("pName").value = "";
+    document.getElementById("pPrice").value = "";
+    document.getElementById("pImage").value = "";
+    document.getElementById("addBtn").innerText = "Add Product";
+    editingProductId = null;
+  } catch (e) {
+    alert("Storage Full! Try using fewer or smaller images.");
+    console.error("LocalStorage Error:", e);
+  }
 }
 
 function displaySellerProducts() {
@@ -99,24 +110,21 @@ function displaySellerProducts() {
   }
 
   products.forEach(p => {
+    // FIX: Added backticks ( ` ) here for the template literal
     container.innerHTML += `
       <div style="border:1px solid #ccc; padding:10px; margin-bottom:10px">
         ${p.images.map(img => `<img src="${img}" width="80" style="margin:5px">`).join("")}
         <br>
         <b>${p.name}</b><br>
         ₹${p.price} (${p.category})<br><br>
-
-        <button onclick="editProduct(${p.id})" style="background:orange;color:white">
-          Edit
-        </button>
-
-        <button onclick="deleteProduct(${p.id})" style="background:red;color:white">
-          Delete
-        </button>
+        <button onclick="editProduct(${p.id})" style="background:orange;color:white">Edit</button>
+        <button onclick="deleteProduct(${p.id})" style="background:red;color:white">Delete</button>
       </div>
     `;
   });
 }
+
+// ... keep your editProduct and deleteProduct functions as they were
 
 function editProduct(id) {
   let product = products.find(p => p.id === id);
