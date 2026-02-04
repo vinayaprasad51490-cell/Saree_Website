@@ -70,7 +70,7 @@
   const product = JSON.parse(localStorage.getItem("selectedProduct"));
 
   if (product) {
-    let imgSrc = "";
+     let imgSrc = "";
 
 if (product.images && product.images.length > 0) {
   imgSrc = product.images[0];
@@ -79,8 +79,6 @@ if (product.images && product.images.length > 0) {
 }
 
 document.getElementById("productImage").src = imgSrc;
-
-
     document.getElementById("productName").innerText = product.name;
     document.getElementById("productCategory").innerText = "Category: " + product.category;
     document.getElementById("productPrice").innerText = "₹" + product.price;
